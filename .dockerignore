@@ -1,0 +1,14 @@
+/.git
+/.idea
+/storage/logs
+/storage/framwork
+/vendor
+/bootstrap/cache/*
+/public/vendor
+/public/storage
+
+composer.lock
+docker-compose.yaml
+docker/php/Dockerfile
+.env.example
+./volumes
