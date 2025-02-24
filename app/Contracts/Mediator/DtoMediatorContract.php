@@ -2,7 +2,10 @@
 
 namespace App\Contracts\Mediator;
 
+use App\Dto\CategoryDto;
+use App\Dto\PostDto;
 use App\Dto\UserDto;
+use App\Enum\PostStatus;
 use App\Enum\UserSexType;
 use App\Enum\UserTypeEnum;
 
@@ -47,4 +50,46 @@ interface DtoMediatorContract {
         ?string $verifiedAt = null,
         array $roles = [],
     ): UserDto;
+
+    /**
+     * @param string         $title
+     * @param string         $slug
+     * @param PostStatus $status
+     * @param int|null       $imageId
+     * @param string|null    $body
+     * @param string|null    $excerpt
+     * @param string|null    $publishedAt
+     * @param bool           $hasComment
+     * @param array          $categories
+     * @param int|null       $categoryId
+     * @return PostDto
+     */
+    public function convertDataToPostDto(
+        string $title,
+        string $slug,
+        PostStatus $status,
+        int|null $imageId = null,
+        string|null $body = null,
+        string|null $excerpt = null,
+        string|null $publishedAt = null,
+        bool $hasComment = true,
+        array $categories = [],
+        int|null $categoryId = null,
+    ): PostDto;
+
+    /**
+     * @param string      $title
+     * @param string      $slug
+     * @param string|null $body
+     * @param int|null    $imageId
+     * @param int|null    $upstreamId
+     * @return CategoryDto
+     */
+    public function convertDataToCategoryDto(
+        string $title,
+        string $slug,
+        string|null $body = null,
+        int|null $imageId = null,
+        int|null $upstreamId = null
+    ): CategoryDto;
 }

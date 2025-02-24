@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\OtpController;
+use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,10 +30,8 @@ Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 });
 
-Route::group(['prefix' => 'product', 'as' => 'product.', 'middleware' => 'auth:sanctum'], function () {
-    Route::get('/', [ProductController::class, 'index']);
-    Route::post('create', [ProductController::class, 'store']);
-    Route::post('add-images', [ProductController::class, 'addImage']);
-    Route::post('order/submit', [ProductController::class, 'orderSubmit']);
-    Route::get('remove/{id}', [ProductController::class, 'remove']);
+Route::group(['prefix' => 'operations', 'as' => 'operations.', 'middleware' => 'auth:sanctum'], function () {
+    Route::apiResource('posts', PostController::class)->only('store,update');
+    Route::post('search', [PostController::class, 'search']);
+    Route::apiResource('categories', PostController::class)->only('store,update');
 });
