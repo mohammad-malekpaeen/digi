@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Dashboard;
+namespace App\Http\Requests\API;
 
 use App\Enum\FieldEnum;
-use App\Enum\PermissionEnum;
-use App\Facades\UserFacade;
 use App\Http\Requests\BaseRequest;
-use App\Models\BlogCategory;
-use App\Models\File;
+use App\Models\Category;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
-class BlogCategoryStoreRequest extends BaseRequest {
+class CategoryStoreRequest extends BaseRequest {
 
 	/**
 	 * @var array
@@ -22,7 +19,7 @@ class BlogCategoryStoreRequest extends BaseRequest {
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool {
-		return UserFacade::hasPermission($this->user(), PermissionEnum::BLOG_CATEGORY_STORE);
+        return auth()->check();
 	}
 
 	/**
@@ -39,7 +36,7 @@ class BlogCategoryStoreRequest extends BaseRequest {
 			],
 			FieldEnum::slug->name       => [
 				'required',
-				Rule::unique(BlogCategory::class, FieldEnum::slug->value)
+				Rule::unique(Category::class, FieldEnum::slug->value)
 					->withoutTrashed(),
 			],
 			FieldEnum::body->name       => [
@@ -47,16 +44,11 @@ class BlogCategoryStoreRequest extends BaseRequest {
 				'string',
 				'max:4294967295',
 			],
-			FieldEnum::imageId->name    => [
-				'nullable',
-				'integer',
-				Rule::exists(File::class, FieldEnum::id->value)
-					->withoutTrashed(),
-			],
+
 			FieldEnum::upstreamId->name => [
 				'nullable',
 				'integer',
-				Rule::exists(BlogCategory::class, FieldEnum::id->value)
+				Rule::exists(Category::class, FieldEnum::id->value)
 					->withoutTrashed(),
 			],
 		];

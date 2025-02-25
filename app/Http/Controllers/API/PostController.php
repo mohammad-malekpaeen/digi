@@ -55,12 +55,9 @@ class PostController extends Controller
             title: $request->input(FieldEnum::title->name),
             slug: $request->input(FieldEnum::slug->name),
             status: PostStatus::tryFromName($request->input(FieldEnum::status->name)),
-            imageId: $request->input(FieldEnum::imageId->name),
             body: $request->input(FieldEnum::body->name),
             excerpt: $request->input(FieldEnum::excerpt->name),
             publishedAt: $request->input(FieldEnum::publishedAt->name),
-            hasComment: $request->input(FieldEnum::hasComment->name, true),
-            categories: $request->input(FieldEnum::categories->name, []),
             categoryId: $request->input(FieldEnum::categoryId->name),
         );
     }
