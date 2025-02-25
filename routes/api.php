@@ -3,7 +3,6 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\OtpController;
 use App\Http\Controllers\API\PostController;
-use App\Http\Controllers\API\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
