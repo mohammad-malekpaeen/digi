@@ -6,6 +6,7 @@ use App\Contracts\Mediator\DtoMediatorContract;
 use App\Contracts\Services\OtpServiceContract;
 use App\Contracts\Services\UserServiceContract;
 use App\Enum\FieldEnum;
+use App\Exceptions\BaseException;
 use App\Exceptions\ModelNotFoundException;
 use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
@@ -13,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -31,21 +33,19 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
         $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-
-            return response()->json([
-                'user' => $user,
-                'authorization' => [
-                    'token' => $user->createToken('ApiToken')->plainTextToken,
-                    'type' => 'bearer',
-                ],
-            ]);
+        $token = JWTAuth::attempt($credentials);
+        if (!$token) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
         return response()->json([
-            'message' => 'Invalid credentials',
-        ], 401);
+            'message' => 'Login successful',
+            'user' => JWTAuth::user(),
+            'authorization' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ],
+        ]);
     }
 
     public function register(Request $request): JsonResponse
@@ -79,23 +79,23 @@ class AuthController extends Controller
                 ]
             );
 
-            Auth::login($user);
+            //Auth::login($user);
             RateLimiter::clear($email);
 
             return response()->json([
                 'user' => $user,
                 'authorization' => [
-                    'token' => $user->createToken('ApiToken')->plainTextToken,
+                    'token' => JWTAuth::fromUser($user),
                     'type' => 'bearer',
                 ],
             ]);
         }
-      return throw new ModelNotFoundException::class ;
+      return throw new BaseException::class ;
     }
 
     public function logout(): JsonResponse
     {
-        Auth::user()->tokens()->delete();
+        JWTAuth::invalidate(JWTAuth::getToken());
 
         return response()->json([
             'message' => 'Successfully logged out',
@@ -132,13 +132,9 @@ class AuthController extends Controller
             RateLimiter::clear($email);
 
             return response()->json([
-                'user' => $user,
-                'authorization' => [
-                    'token' => $user->createToken('ApiToken')->plainTextToken,
-                    'type' => 'bearer',
-                ],
+                'message' => 'Successfully Reset Password',
             ]);
         }
-        return throw new ModelNotFoundException::class ;
+        return throw new BaseException::class ;
     }
 }
