@@ -6,6 +6,7 @@ use App\Contracts\Repositories\UserRepositoryContract;
 use App\Contracts\Services\UserServiceContract;
 use App\Dto\UserDto;
 use App\Enum\FieldEnum;
+use App\Facades\StringFacade;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,11 +37,10 @@ class UserService extends BaseService implements UserServiceContract
 
         if (!$user) {
             $user = $this->repository->create([
-                FieldEnum::type->value => $dto->getType(),
-                FieldEnum::name->value => $dto->getName(),
-                FieldEnum::family->value => $dto->getFamily(),
+                FieldEnum::name->value => StringFacade::normalizePersianAndArabicCharacters($dto->getName()),
                 FieldEnum::email->value => $dto->getEmail(),
-            ]);
+                FieldEnum::password->value => $dto->getPassword()
+                ]);
         }
 
         return $user;

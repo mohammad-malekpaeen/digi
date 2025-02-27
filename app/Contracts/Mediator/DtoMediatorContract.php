@@ -5,76 +5,38 @@ namespace App\Contracts\Mediator;
 use App\Dto\CategoryDto;
 use App\Dto\PostDto;
 use App\Dto\UserDto;
-use App\Enum\PostStatus;
-use App\Enum\UserSexType;
-use App\Enum\UserTypeEnum;
 
 /**
  *
  */
-interface DtoMediatorContract {
+interface DtoMediatorContract
+{
     /**
-     * @param string $email
      * @param string|null $name
-     * @param string|null $family
-     * @param UserSexType|null $sex
-     * @param string|null $mobileNumber
-     * @param string|null $nationalCode
-     * @param string|null $economicCode
-     * @param string|null $birthday
-     * @param UserTypeEnum|null $type
-     * @param int|null $financeScore
-     * @param bool|null $canSell
-     * @param bool|null $canBuy
-     * @param string|null $nationalVerifiedAt
-     * @param string|null $emailVerifiedAt
-     * @param string|null $verifiedAt
-     * @param array $roles
+     * @param string|null $email
+     * @param string|null $password
      * @return UserDto
      */
     public function convertDataToUserDto(
-        string $email,
-        ?string $name = null,
-        ?string $family = null,
-        ?UserSexType $sex = null,
-        ?string $mobileNumber = null,
-        ?string $nationalCode = null,
-        ?string $economicCode = null,
-        ?string $birthday = null,
-        ?UserTypeEnum $type = UserTypeEnum::REAL,
-        ?int $financeScore = 0,
-        bool $canSell = false,
-        bool $canBuy = true,
-        ?string $nationalVerifiedAt = null,
-        ?string $emailVerifiedAt = null,
-        ?string $verifiedAt = null,
-        array $roles = [],
+        ?string  $name = null,
+        ?string $email = null,
+        ?string $password = null,
     ): UserDto;
 
     /**
-     * @param string         $title
-     * @param string         $slug
-     * @param PostStatus $status
-     * @param int|null       $imageId
-     * @param string|null    $body
-     * @param string|null    $excerpt
-     * @param string|null    $publishedAt
-     * @param bool           $hasComment
-     * @param array          $categories
-     * @param int|null       $categoryId
+     * @param int $category_id
+     * @param int $user_id
+     * @param string $title
+     * @param string $slug
+     * @param string $body
      * @return PostDto
      */
     public function convertDataToPostDto(
+        int $category_id,
+        int $user_id,
         string $title,
         string $slug,
-        PostStatus $status,
-        int|null $imageId = null,
-        string|null $body = null,
-        string|null $excerpt = null,
-        string|null $publishedAt = null,
-        bool $hasComment = true,
-        array $categories = [],
-        int|null $categoryId = null,
+        string $body,
     ): PostDto;
 
     /**

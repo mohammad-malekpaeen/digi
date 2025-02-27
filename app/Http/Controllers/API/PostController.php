@@ -6,7 +6,6 @@ use App\Contracts\Mediator\DtoMediatorContract;
 use App\Contracts\Services\PostServiceContract;
 use App\Dto\PostDto;
 use App\Enum\FieldEnum;
-use App\Enum\PostStatus;
 use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PostStoreRequest;
@@ -55,7 +54,6 @@ class PostController extends Controller
         return $this->dtoMediator->convertDataToPostDto(
             title: $request->input(FieldEnum::title->name),
             slug: StringFacade::slug($request->input(FieldEnum::slug->name)),
-            status: PostStatus::tryFromName($request->input(FieldEnum::status->name)),
             body: $request->input(FieldEnum::body->name),
             excerpt: $request->input(FieldEnum::excerpt->name),
             publishedAt: $request->input(FieldEnum::publishedAt->name),

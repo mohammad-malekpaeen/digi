@@ -8,11 +8,9 @@ use App\Contracts\Services\UserServiceContract;
 use App\Enum\FieldEnum;
 use App\Exceptions\BaseException;
 use App\Exceptions\ModelNotFoundException;
-use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -52,32 +50,26 @@ class AuthController extends Controller
     {
         $request->validate([
             FieldEnum::name->name => 'required|string|max:255',
-            FieldEnum::family->name => 'required|string|max:255',
             FieldEnum::email->name => 'required|string|email|max:255|unique:users',
             FieldEnum::password->name => 'required|string|min:3',
             FieldEnum::code->name => 'required|string|min:4',
         ]);
 
+        $name = $request->input(FieldEnum::name->name);
         $email = $request->input(FieldEnum::email->name);
         $code = $request->input(FieldEnum::code->name);
+        $password = $request->input(FieldEnum::password->name);
+
+        $userDto = $this->dtoMediator->convertDataToUserDto(
+            email: $email
+        );
 
         if ($this->otpService->check($email, $code)) {
-            $user = $this->userService->findOrCreateByEmail(
-                $this->dtoMediator->convertDataToUserDto(
-                    email: $email
-                )
-            );
+            $user = $this->userService->findOrCreateByEmail($userDto);
+            $userDto->setName($name);
+            $userDto->setPassword($password);
+            $this->userService->update($userDto);
             throw_if(empty($user), ModelNotFoundException::class);
-            $user->update(
-                [
-                    FieldEnum::name->name =>
-                       StringFacade::normalizePersianAndArabicCharacters($request->input(FieldEnum::name->name)) ,
-                    FieldEnum::family->name =>
-                        StringFacade::normalizePersianAndArabicCharacters($request->input(FieldEnum::family->name)),
-                    FieldEnum::email->name => $request->input(FieldEnum::email->name),
-                    FieldEnum::password->name => $request->input(FieldEnum::password->name),
-                ]
-            );
 
             //Auth::login($user);
             RateLimiter::clear($email);
@@ -90,7 +82,9 @@ class AuthController extends Controller
                 ],
             ]);
         }
-      return throw new BaseException::class ;
+        return response()->json([
+            'message' => 'User Not Found',
+        ]);
     }
 
     public function logout(): JsonResponse
@@ -102,7 +96,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function reset(Request $request): JsonResponse
+    public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
             FieldEnum::email->name => 'required|string|email|max:255|unique:users',
@@ -112,22 +106,16 @@ class AuthController extends Controller
 
         $email = $request->input(FieldEnum::email->name);
         $code = $request->input(FieldEnum::code->name);
+        $password = $request->input(FieldEnum::password->name);
+
+        $userDto = $this->dtoMediator->convertDataToUserDto(
+            email: $email
+        );
 
         if ($this->otpService->check($email, $code)) {
-            $userDto = $this->dtoMediator->convertDataToUserDto(
-                email: $email
-            );
-            $user = $this->userService->findByCondition(
-                conditions: [
-                    FieldEnum::email->value => $userDto->getEmail()
-                ]
-            );
-
-            $user->update(
-                [
-                    FieldEnum::password->name => $request->input(FieldEnum::password->name),
-                ]
-            );
+            $user = $this->userService->findOrCreateByEmail($userDto);
+            $userDto->setPassword($password);
+            $this->userService->update($userDto);
 
             RateLimiter::clear($email);
 
@@ -135,6 +123,8 @@ class AuthController extends Controller
                 'message' => 'Successfully Reset Password',
             ]);
         }
-        return throw new BaseException::class ;
+        return response()->json([
+            'message' => 'Not Found Valid OTP',
+        ]);
     }
 }

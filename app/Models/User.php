@@ -5,18 +5,15 @@ namespace App\Models;
 use App\Enum\ColumnFormat;
 use App\Enum\FieldEnum;
 use App\Enum\FilterField;
-use App\Enum\UserSexType;
-use App\Enum\UserTypeEnum;
 use App\Models\Scopes\FilterScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, FilterScope, SoftDeletes;
+    use HasFactory, Notifiable, FilterScope, SoftDeletes;
 
     /**
      * The transibutes that are mass assignable.
@@ -44,14 +41,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        FieldEnum::emailVerifiedAt->value    => 'datetime',
-        FieldEnum::nationalVerifiedAt->value => 'datetime',
-        FieldEnum::verifiedAt->value         => 'datetime',
-        FieldEnum::type->value               => UserTypeEnum::class,
-        FieldEnum::sex->value                => UserSexType::class,
-        FieldEnum::canBuy->value             => 'boolean',
-        FieldEnum::canSell->value            => 'boolean',
-    ];
+      ];
 
     /**
      * @return array

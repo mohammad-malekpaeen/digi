@@ -3,7 +3,6 @@
 namespace App\Http\Requests\API;
 
 use App\Enum\FieldEnum;
-use App\Enum\PostStatus;
 use App\Http\Requests\BaseRequest;
 use App\Models\Category;
 use App\Models\Post;
@@ -45,7 +44,6 @@ class PostStoreRequest extends BaseRequest {
 			],
 			FieldEnum::status->name            => [
 				'required',
-				Rule::in(PostStatus::names())
 			],
 			FieldEnum::body->name              => [
 				'required',

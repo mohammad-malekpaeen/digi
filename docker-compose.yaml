@@ -64,6 +64,18 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  meilisearch:
+    image: getmeili/meilisearch:v1.13.0
+    container_name: meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY=: 'MohammadMalek'
+    ports:
+      - "7700:7700"
+    volumes:
+     - db_meili:/meili_data
+
+
 volumes:
   db_data:
     driver: local
@@ -76,4 +88,10 @@ volumes:
     driver_opts:
       type: 'none'
       device: '${VOLUME_PATH}/redis_data'
+      o: 'bind'
+  db_meili:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: '${VOLUME_PATH}/db_meili'
       o: 'bind'

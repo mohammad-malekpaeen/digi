@@ -3,7 +3,6 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\OtpController;
 use App\Http\Controllers\API\PostController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,14 +17,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
-    Route::post('send-otp', [OtpController::class, 'sendOtp']);
-    Route::post('forget', [OtpController::class, 'forget']);
+    Route::post('otp', [OtpController::class, 'create']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
-    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 });
 
-Route::group(['prefix' => 'operations', 'as' => 'operations.', 'middleware' => 'auth:sanctum'], function () {
+Route::group(['prefix' => 'operations', 'as' => 'operations.', 'middleware' => 'auth:api'], function () {
     Route::apiResource('posts', PostController::class)->only('store,update');
     Route::post('search', [PostController::class, 'search']);
     Route::apiResource('categories', PostController::class)->only('store,update');

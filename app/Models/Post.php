@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enum\ColumnFormat;
 use App\Enum\FieldEnum;
 use App\Enum\FilterField;
-use App\Enum\PostStatus;
 use App\Models\Scopes\FilterScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,7 +29,6 @@ class Post extends Model
     ];
 
     protected $casts = [
-        FieldEnum::status->value => PostStatus::class,
         FieldEnum::hasComment->value => 'boolean',
         FieldEnum::publishedAt->value => 'datetime',
     ];
