@@ -6,6 +6,7 @@ use App\Contracts\Mediator\DtoMediatorContract;
 use App\Contracts\Services\CategoryServiceContract;
 use App\Dto\CategoryDto;
 use App\Enum\FieldEnum;
+use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\CategoryStoreRequest;
 use App\Http\Requests\API\CategoryUpdateRequest;
@@ -46,9 +47,7 @@ class CategoryController extends Controller
     {
         return $this->dtoMediator->convertDataToCategoryDto(
             title: $request->input(FieldEnum::title->name),
-            slug: $request->input(FieldEnum::slug->name),
-            body: $request->input(FieldEnum::body->name),
-            upstreamId: $request->input(FieldEnum::upstreamId->name),
+            slug: StringFacade::slug($request->input(FieldEnum::slug->name)),
         );
     }
 

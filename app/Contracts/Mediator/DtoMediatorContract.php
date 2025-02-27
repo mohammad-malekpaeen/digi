@@ -78,18 +78,12 @@ interface DtoMediatorContract {
     ): PostDto;
 
     /**
-     * @param string      $title
-     * @param string      $slug
-     * @param string|null $body
-     * @param int|null    $imageId
-     * @param int|null    $upstreamId
+     * @param string $title
+     * @param string $slug
      * @return CategoryDto
      */
     public function convertDataToCategoryDto(
         string $title,
-        string $slug,
-        string|null $body = null,
-        int|null $imageId = null,
-        int|null $upstreamId = null
+        string $slug
     ): CategoryDto;
 }

@@ -17,10 +17,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
     Route::post('send-otp', [OtpController::class, 'sendOtp']);
     Route::post('forget', [OtpController::class, 'forget']);

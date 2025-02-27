@@ -19,7 +19,7 @@
         "spatie/laravel-data": "^4.13",
         "spatie/laravel-json-api-paginate": "^1.16",
         "spatie/laravel-query-builder": "^6.3",
-        "tymon/jwt-auth": "^2.1"
+        "tymon/jwt-auth": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

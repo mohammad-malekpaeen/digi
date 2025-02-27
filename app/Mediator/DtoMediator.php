@@ -3,9 +3,13 @@
 namespace App\Mediator;
 
 use App\Contracts\Mediator\DtoMediatorContract;
+use App\Dto\CategoryDto;
+use App\Dto\PostDto;
 use App\Dto\UserDto;
+use App\Enum\PostStatus;
 use App\Enum\UserSexType;
 use App\Enum\UserTypeEnum;
+
 /**
  *
  */
@@ -66,6 +70,43 @@ class DtoMediator implements DtoMediatorContract
             emailVerifiedAt: $emailVerifiedAt,
             verifiedAt: $verifiedAt,
             roles: $roles
+        );
+    }
+
+    public function convertDataToCategoryDto(
+        string $title,
+        string $slug
+    ): CategoryDto
+    {
+        return new CategoryDto (
+            title: $title,
+            slug: $slug
+        );
+    }
+
+    public function convertDataToPostDto(
+        string     $title,
+        string     $slug,
+        PostStatus $status,
+        ?int       $imageId = null,
+        ?string    $body = null,
+        ?string    $excerpt = null,
+        ?string    $publishedAt = null,
+        bool       $hasComment = true,
+        array      $categories = [],
+        ?int       $categoryId = null): PostDto
+    {
+        return new PostDto (
+            title: $title,
+            slug: $slug,
+            status: $status,
+            imageId: $imageId,
+            body: $body,
+            excerpt: $excerpt,
+            publishedAt: $publishedAt
+            , hasComment: $hasComment
+            , categories: $categories
+            , categoryId: $categoryId
         );
     }
 }

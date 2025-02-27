@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\CategoryRepositoryContract;
 use App\Models\Category;
 
-final class CategoryRepository extends BaseRepository implements CategoryRepositoryContract {
+class CategoryRepository extends BaseRepository implements CategoryRepositoryContract {
 
 	/**
 	 * @param Category $model

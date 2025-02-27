@@ -1,0 +1,79 @@
+services:
+  php:
+    image: "php-digi"
+    container_name: php-digi
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    build:
+      context: ./
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        TZ: "Asia/Tehran"
+        APP_ENV: ${APP_ENV}
+    depends_on:
+      - database
+      - redis
+    links:
+      - database
+      - redis
+    tty: true
+    volumes:
+      - ./app:/var/www/app
+      - ./bootstrap/app.php:/var/www/bootstrap/app.php
+      - ./bootstrap/providers.php:/var/www/bootstrap/providers.php
+      - ./.env:/var/www/.env
+      - ./lang:/var/www/lang
+      - ./stubs:/var/www/stubs
+      - ./tests:/var/www/tests
+      - ./routes:/var/www/routes
+      - ./public:/var/www/public
+      - ./config:/var/www/config
+      - ./database:/var/www/database
+      - ./resources:/var/www/resources
+      - ./phpunit.xml:/var/www/phpunit.xml
+      - ./composer.json:/var/www/composer.json
+      - ./storage:/var/www/storage
+
+  redis:
+    image: "redis"
+    container_name: redis
+    restart: unless-stopped
+    build: ./docker/redis
+    volumes:
+      - redis_data:/data
+    command: --requirepass ${REDIS_PASSWORD}
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - ALLOW_EMPTY_PASSWORD=no
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+    hostname: redis
+
+  database:
+    image: postgres:16-alpine
+    container_name: database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: '${VOLUME_PATH}/db_data'
+      o: 'bind'
+  redis_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: '${VOLUME_PATH}/redis_data'
+      o: 'bind'

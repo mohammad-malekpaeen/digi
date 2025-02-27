@@ -25,20 +25,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         FieldEnum::name->value,
-        FieldEnum::family->value,
-        FieldEnum::sex->value,
         FieldEnum::email->value,
-        FieldEnum::mobileNumber->value,
-        FieldEnum::nationalCode->value,
-        FieldEnum::economicCode->value,
-        FieldEnum::birthday->value,
-        FieldEnum::type->value,
-        FieldEnum::financeScore->value,
-        FieldEnum::canSell->value,
-        FieldEnum::canBuy->value,
-        FieldEnum::nationalVerifiedAt->value,
-        FieldEnum::emailVerifiedAt->value,
-        FieldEnum::verifiedAt->value,
+        FieldEnum::password->value,
     ];
 
     /**
