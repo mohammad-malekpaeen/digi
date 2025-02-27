@@ -36,8 +36,9 @@ class UserService extends BaseService implements UserServiceContract
         );
 
         if (!$user) {
+            $name = !empty($dto->getName()) ? StringFacade::normalizePersianAndArabicCharacters($dto->getName()) : null;
             $user = $this->repository->create([
-                FieldEnum::name->value => StringFacade::normalizePersianAndArabicCharacters($dto->getName()),
+                FieldEnum::name->value => $name,
                 FieldEnum::email->value => $dto->getEmail(),
                 FieldEnum::password->value => $dto->getPassword()
                 ]);

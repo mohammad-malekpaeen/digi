@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\Mediator\DtoMediatorContract;
+use App\Contracts\Mediator\StringMediatorContract;
 use App\Contracts\Repositories\CategoryRepositoryContract;
 use App\Contracts\Repositories\PostRepositoryContract;
 use App\Contracts\Repositories\UserRepositoryContract;
@@ -11,6 +12,7 @@ use App\Contracts\Services\OtpServiceContract;
 use App\Contracts\Services\PostServiceContract;
 use App\Contracts\Services\UserServiceContract;
 use App\Mediator\DtoMediator;
+use App\Mediator\StringMediator;
 use App\Repositories\CategoryRepository;
 use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
@@ -40,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
 
         //Others
         DtoMediatorContract::class => DtoMediator::class,
+        StringMediatorContract::class => StringMediator::class,
     ];
 
 

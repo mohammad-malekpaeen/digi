@@ -14,9 +14,9 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string(FieldEnum::name->value);
+            $table->string(FieldEnum::name->value)->nullable();
             $table->string(FieldEnum::email->value)->unique();
-            $table->string(FieldEnum::password->value);
+            $table->string(FieldEnum::password->value)->nullable();
             $table->timestamps();
             $table->rememberToken();
             $table->softDeletes();
