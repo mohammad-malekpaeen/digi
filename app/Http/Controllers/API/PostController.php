@@ -9,7 +9,6 @@ use App\Enum\FieldEnum;
 use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PostRequest;
-use App\Http\Requests\API\PostUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -62,10 +61,10 @@ class PostController extends Controller
     }
 
     /**
-     * @param PostUpdateRequest $request
+     * @param PostRequest $request
      * @param int $id
      */
-    public function update(PostUpdateRequest $request, int $id)
+    public function update(PostRequest $request, int $id)
     {
         $dto = $this->getDtoFromRequest($request)->setId($id);
         $this->postService->update($dto);
