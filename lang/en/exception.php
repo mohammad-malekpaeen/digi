@@ -14,6 +14,10 @@ return [
 	'validation'      => 'The submitted data is not valid.',
 	'modelNotFound'   => 'No page was found with the submitted parameters.',
 	'lockTimeout'     => 'Timeout Service Concurrent Requests',
+	'user-registered' => 'User is Registered Before Please Login',
+	'user-notFount'   => 'User Not Found',
+	'otp-invalid'     => 'Otp is Not Correct',
+	'user-invalidCredential' => 'Input Data Is Not Valid Please Register',
 	//</editor-fold>
 ];
 

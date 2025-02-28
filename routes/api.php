@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
     Route::post('otp', [OtpController::class, 'create']);
+    Route::post('forget', [OtpController::class, 'forget']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);

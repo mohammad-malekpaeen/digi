@@ -6,7 +6,10 @@ use App\Contracts\Mediator\DtoMediatorContract;
 use App\Contracts\Services\OtpServiceContract;
 use App\Contracts\Services\UserServiceContract;
 use App\Enum\FieldEnum;
-use App\Exceptions\ModelNotFoundException;
+use App\Exceptions\OtpInvalidException;
+use App\Exceptions\UserInvalidCredentialException;
+use App\Exceptions\UserNotFoundException;
+use App\Exceptions\UserRegisteredException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Auth\LoginRequest;
 use App\Http\Requests\API\Auth\RegisterRequest;
@@ -14,7 +17,6 @@ use App\Http\Requests\API\Auth\ResetPasswordRequest;
 use App\Http\Requests\BaseRequest;
 use App\Http\Resources\API\Auth\LoginResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -39,6 +41,9 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * @throws OtpInvalidException
+     */
     public function register(RegisterRequest $request): LoginResource
     {
         $userDto = $this->dtoMediator->convertDataToUserDto(
@@ -47,18 +52,16 @@ class AuthController extends Controller
 
         $user = $this->userService->findOrCreateByEmail($userDto);
 
-        throw_if(empty($user),ModelNotFoundException::class); //User Not Found
+        throw_if(empty($user), UserNotFoundException::class);
 
         $isRegisteredBefore = !empty(data_get($user, FieldEnum::name->value)) &&
-                              !empty(data_get($user, FieldEnum::password->value));
+            !empty(data_get($user, FieldEnum::password->value));
 
-        throw_if($isRegisteredBefore,ModelNotFoundException::class); //User is Registered Before Please Login
+        throw_if($isRegisteredBefore, UserRegisteredException::class);
 
         if ($this->otpService->check($request->getInputEmail(), $request->getInputCode())) {
 
-            $userDto->setName($request->getInputName())
-                    ->setPassword($request->getInputPassword());
-
+            $userDto->setName($request->getInputName())->setPassword($request->getInputPassword());
 
             $this->userService->updateByEmail($userDto);
 
@@ -74,42 +77,40 @@ class AuthController extends Controller
 
         }
 
-        return throw new ModelNotFoundException(); //Otp is Not Correct
+        return throw new OtpInvalidException();
     }
 
+    /**
+     * @throws OtpInvalidException
+     */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-
-        $email = $request->input(FieldEnum::email->name);
-        $code = $request->input(FieldEnum::code->name);
-        $password = $request->input(FieldEnum::password->name);
-
         $userDto = $this->dtoMediator->convertDataToUserDto(
             email: $request->getInputEmail()
         );
 
-        if ($this->otpService->check($request->getInputEmail(), $code)) {
-            $user = $this->userService->findOrCreateByEmail($userDto);
-            $userDto->setPassword($password);
+        if ($this->otpService->check($request->getInputEmail(), $request->getInputCode())) {
+            $userDto->setPassword($request->getInputPassword());
             $this->userService->updateByEmail($userDto);
 
             RateLimiter::clear($request->getInputEmail());
 
             return response()->json([
-                'message' => 'Successfully Reset Password',
+                'message' => trans('message.reset-success'),
             ]);
         }
-        return response()->json([
-            'message' => 'Not Found Valid OTP',
-        ]);
+
+        return throw new OtpInvalidException();
     }
 
-    private function LoginByJwt(BaseRequest $request){
+    private function LoginByJwt(BaseRequest $request)
+    {
         $token = JWTAuth::attempt($request->only(
             FieldEnum::email->value,
             FieldEnum::password->value)
         );
-        throw_if(!$token,ModelNotFoundException::class); //Invalid credentials
+        throw_if(!$token, UserInvalidCredentialException::class);
+
         return $token;
     }
 

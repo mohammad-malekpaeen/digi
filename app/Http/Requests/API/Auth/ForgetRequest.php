@@ -5,7 +5,7 @@ namespace App\Http\Requests\API\Auth;
 use App\Enum\FieldEnum;
 use App\Http\Requests\BaseRequest;
 
-class OtpRequest extends BaseRequest
+class ForgetRequest extends BaseRequest
 {
 
     /**
@@ -24,7 +24,7 @@ class OtpRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            FieldEnum::email->name => 'required|string|email|max:255',
+            FieldEnum::email->name => 'required|string|email|max:255|exists:users,email',
         ];
     }
 
