@@ -28,7 +28,8 @@ class OtpEmailMessage extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'OTP Code',
+            from: env('MAIL_SENDER'),
+            subject: 'OTP Code'
         );
     }
 
@@ -38,9 +39,10 @@ class OtpEmailMessage extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'email',
+            markdown: 'emails.otp'
         );
     }
+
 
     /**
      * Get the attachments for the message.

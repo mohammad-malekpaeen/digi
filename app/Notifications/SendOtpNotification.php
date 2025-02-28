@@ -7,7 +7,6 @@ use App\Mail\OtpEmailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Mail;
 
 class SendOtpNotification extends Notification implements EmailNotification, ShouldQueue
 {
@@ -41,4 +40,6 @@ class SendOtpNotification extends Notification implements EmailNotification, Sho
         return (new OtpEmailMessage($this->otp))
             ->to($this->email);
     }
+
+
 }
