@@ -50,9 +50,9 @@ class AuthController extends Controller
     {
         $request->validate([
             FieldEnum::name->name => 'required|string|max:255',
-            FieldEnum::email->name => 'required|string|email|max:255|unique:users',
+            FieldEnum::email->name => 'required|string|email|max:255|exists:users,email',
             FieldEnum::password->name => 'required|string|min:3',
-            FieldEnum::code->name => 'required|string|min:4',
+            FieldEnum::code->name => 'required|string|min:6',
         ]);
 
         $name = $request->input(FieldEnum::name->name);
@@ -64,12 +64,24 @@ class AuthController extends Controller
             email: $email
         );
 
+        $user = $this->userService->findOrCreateByEmail($userDto);
+        if(empty($user)){
+            return response()->json([
+                'message' => 'User Not Found',
+            ]);
+          //  throw_if(empty($user), ModelNotFoundException::class);
+        }
+
+        if(!empty(data_get($user,FieldEnum::name->value)) && !empty(data_get($user,FieldEnum::password->value))){
+            return response()->json([
+                'message' => 'User is Registered Before Please Login',
+            ]);
+        }
+
         if ($this->otpService->check($email, $code)) {
-            $user = $this->userService->findOrCreateByEmail($userDto);
             $userDto->setName($name);
             $userDto->setPassword($password);
-            $this->userService->update($userDto);
-            throw_if(empty($user), ModelNotFoundException::class);
+            $this->userService->updateByEmail($userDto);
 
             //Auth::login($user);
             RateLimiter::clear($email);
@@ -83,7 +95,7 @@ class AuthController extends Controller
             ]);
         }
         return response()->json([
-            'message' => 'User Not Found',
+            'message' => 'Otp is Not Correct',
         ]);
     }
 
@@ -101,7 +113,7 @@ class AuthController extends Controller
         $request->validate([
             FieldEnum::email->name => 'required|string|email|max:255|unique:users',
             FieldEnum::password->name => 'required|string|min:3',
-            FieldEnum::code->name => 'required|string|min:4',
+            FieldEnum::code->name => 'required|string|min:6',
         ]);
 
         $email = $request->input(FieldEnum::email->name);
@@ -115,7 +127,7 @@ class AuthController extends Controller
         if ($this->otpService->check($email, $code)) {
             $user = $this->userService->findOrCreateByEmail($userDto);
             $userDto->setPassword($password);
-            $this->userService->update($userDto);
+            $this->userService->updateByEmail($userDto);
 
             RateLimiter::clear($email);
 

@@ -21,5 +21,7 @@ interface UserServiceContract extends BaseServiceContract
      */
     public function update(UserDto $dto): bool;
 
+    public function updateByEmail(UserDto $dto): bool;
+
 
 }

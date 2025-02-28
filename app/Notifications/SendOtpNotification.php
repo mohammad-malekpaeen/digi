@@ -15,11 +15,11 @@ class SendOtpNotification extends Notification implements EmailNotification, Sho
     use Queueable;
 
     /**
-     * @param int $email
+     * @param string $email
      * @param string $otp
      */
     public function __construct(
-        protected int    $email,
+        protected string $email,
         protected string $otp,
     )
     {
@@ -36,8 +36,9 @@ class SendOtpNotification extends Notification implements EmailNotification, Sho
         return ['mail'];
     }
 
-    public function toEmail($notifiable)
+    public function toMail($notifiable)
     {
-        return Mail::to($this->email)->send(new OtpEmailMessage($this->otp));
+        return (new OtpEmailMessage($this->otp))
+            ->to($this->email);
     }
 }

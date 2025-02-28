@@ -4,5 +4,5 @@ namespace App\Contracts\Notifications;
 
 interface EmailNotification
 {
-    public function toEmail($notifiable);
+    public function toMail($notifiable);
 }

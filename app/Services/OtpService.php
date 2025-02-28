@@ -89,10 +89,7 @@ final class OtpService implements OtpServiceContract
             return $otp;
         }
 
-        throw new OtpRateLimitException(
-            trans('exception.throttle', ['seconds' => RateLimiter::availableIn($key)]),
-            Response::HTTP_TOO_MANY_REQUESTS
-        );
+        throw new OtpRateLimitException();
     }
 
     /**

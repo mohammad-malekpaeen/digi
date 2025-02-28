@@ -61,4 +61,14 @@ class UserService extends BaseService implements UserServiceContract
         return true;
     }
 
+    public function updateByEmail(UserDto $dto): bool
+    {
+        $this->repository->updateByCondition(
+            [[FieldEnum::email->value, '=', $dto->getEmail()]],
+            $dto->toArray()
+        );
+        return true;
+    }
+
+
 }
