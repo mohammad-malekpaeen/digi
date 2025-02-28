@@ -8,7 +8,7 @@ use App\Dto\PostDto;
 use App\Enum\FieldEnum;
 use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\PostStoreRequest;
+use App\Http\Requests\API\PostRequest;
 use App\Http\Requests\API\PostUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,10 +34,10 @@ class PostController extends Controller
     }
 
     /**
-     * @param PostStoreRequest $request
+     * @param PostRequest $request
      *
      */
-    public function store(PostStoreRequest $request)
+    public function store(PostRequest $request)
     {
         $dto = $this->getDtoFromRequest($request);
         $this->postService->create($dto);

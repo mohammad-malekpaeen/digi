@@ -8,35 +8,38 @@ use App\Dto\CategoryDto;
 use App\Enum\FieldEnum;
 use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\CategoryStoreRequest;
-use App\Http\Requests\API\CategoryUpdateRequest;
+use App\Http\Requests\API\CategoryRequest;
+use App\Http\Resources\API\CategoryResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
 
     /**
      * @param DtoMediatorContract $dtoMediator
-     * @param CategoryServiceContract $service
+     * @param CategoryServiceContract $categoryService
      */
     public function __construct(
         protected DtoMediatorContract     $dtoMediator,
-        protected CategoryServiceContract $service,
+        protected CategoryServiceContract $categoryService,
     )
     {
     }
 
 
     /**
-     * @param CategoryStoreRequest $request
+     * @param CategoryRequest $request
+     * @return CategoryResource
      */
-    public function store(CategoryStoreRequest $request)
+    public function store(CategoryRequest $request): CategoryResource
     {
         $dto = $this->getDtoFromRequest($request);
-        $this->service->create($dto);
+        $category = $this->categoryService->create($dto);
 
-        return response(null, Response::HTTP_CREATED);
+        return CategoryResource::make([
+            'message' => trans('message.category-store-success'),
+            'categories' => $category,
+        ]);
     }
 
     /**
@@ -52,15 +55,17 @@ class CategoryController extends Controller
     }
 
     /**
-     * @param CategoryUpdateRequest $request
+     * @param CategoryRequest $request
      * @param int $id
      */
-    public function update(CategoryUpdateRequest $request, int $id)
+    public function update(CategoryRequest $request, int $id)
     {
         $dto = $this->getDtoFromRequest($request)->setId($id);
-        $this->service->update($dto);
+      $this->categoryService->update($dto);
 
-        return response(null, Response::HTTP_OK);
+        return response()->json([
+            'message' => trans('message.category-update-success'),
+        ]);
     }
 
 }

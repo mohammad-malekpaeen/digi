@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string(FieldEnum::slug->value)->unique();
             $table->longText(FieldEnum::body->value)->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

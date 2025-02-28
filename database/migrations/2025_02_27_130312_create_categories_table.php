@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string(FieldEnum::title->value);
             $table->string(FieldEnum::slug->value)->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

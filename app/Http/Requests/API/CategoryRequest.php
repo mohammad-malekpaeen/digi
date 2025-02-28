@@ -8,7 +8,7 @@ use App\Models\Category;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
-class CategoryUpdateRequest extends BaseRequest {
+class CategoryRequest extends BaseRequest {
 
 	/**
 	 * @var array
@@ -36,20 +36,17 @@ class CategoryUpdateRequest extends BaseRequest {
 			],
 			FieldEnum::slug->name       => [
 				'required',
-
-			],
-			FieldEnum::body->name       => [
-				'nullable',
-				'string',
-				'max:4294967295',
-			],
-
-			FieldEnum::upstreamId->name => [
-				'nullable',
-				'integer',
-				Rule::exists(Category::class, FieldEnum::id->value)
+				Rule::unique(Category::class, FieldEnum::slug->value)
 					->withoutTrashed(),
 			],
 		];
 	}
+
+    public function getInputTitle(){
+        return $this->input(FieldEnum::title->name);
+    }
+
+    public function getInputSlug(){
+        return $this->input(FieldEnum::slug->name);
+    }
 }

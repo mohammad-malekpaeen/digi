@@ -6,6 +6,8 @@ return [
 	'login-success' => 'Login successful',
 	'reset-success' => 'Successfully Reset Password',
 	'logout-success' => 'Successfully logged out',
+	'category-update-success' => 'Successfully Update Category',
+	'category-store-success' => 'Successfully Store Category',
 	//</editor-fold>
 ];
 
