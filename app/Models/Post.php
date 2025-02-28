@@ -17,20 +17,13 @@ class Post extends Model
     use  SoftDeletes, FilterScope, Searchable;
 
     protected $fillable = [
-        FieldEnum::imageId->value,
         FieldEnum::title->value,
         FieldEnum::slug->value,
         FieldEnum::body->value,
-        FieldEnum::excerpt->value,
-        FieldEnum::status->value,
-        FieldEnum::publishedAt->value,
-        FieldEnum::hasComment->value,
         FieldEnum::categoryId->value,
     ];
 
     protected $casts = [
-        FieldEnum::hasComment->value => 'boolean',
-        FieldEnum::publishedAt->value => 'datetime',
     ];
 
     public function searchableAs(): string

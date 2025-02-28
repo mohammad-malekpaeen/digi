@@ -3,6 +3,7 @@
 namespace App\Dto;
 
 use App\Enum\FieldEnum;
+use Illuminate\Hashing\BcryptHasher;
 
 class UserDto extends BaseDto
 {
@@ -66,7 +67,7 @@ class UserDto extends BaseDto
      */
     public function setPassword(?string $password): void
     {
-        $this->password = $password;
+        $this->password = bcrypt($password);
     }
 
 
