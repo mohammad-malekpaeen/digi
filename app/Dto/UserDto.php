@@ -3,7 +3,6 @@
 namespace App\Dto;
 
 use App\Enum\FieldEnum;
-use Illuminate\Hashing\BcryptHasher;
 
 class UserDto extends BaseDto
 {
@@ -21,6 +20,17 @@ class UserDto extends BaseDto
     {
     }
 
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            FieldEnum::name->value => $this->getName(),
+            FieldEnum::email->value => $this->getEmail(),
+            FieldEnum::password->value => $this->getPassword(),
+        ];
+    }
 
     /**
      * @return string|null
@@ -48,39 +58,32 @@ class UserDto extends BaseDto
 
     /**
      * @param string|null $name
+     * @return UserDto
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): self
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
      * @param string|null $email
+     * @return UserDto
      */
-    public function setEmail(?string $email): void
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
+        return $this;
     }
 
     /**
      * @param string|null $password
+     * @return UserDto
      */
-    public function setPassword(?string $password): void
+    public function setPassword(?string $password): self
     {
         $this->password = bcrypt($password);
+        return $this;
     }
 
-
-
-    /**
-     * @return array
-     */
-    function toArray(): array
-    {
-        return [
-            FieldEnum::name->value => $this->getName(),
-            FieldEnum::email->value => $this->getEmail(),
-            FieldEnum::password->value => $this->getPassword(),
-        ];
-    }
 }

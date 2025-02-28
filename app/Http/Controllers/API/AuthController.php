@@ -6,9 +6,13 @@ use App\Contracts\Mediator\DtoMediatorContract;
 use App\Contracts\Services\OtpServiceContract;
 use App\Contracts\Services\UserServiceContract;
 use App\Enum\FieldEnum;
-use App\Exceptions\BaseException;
 use App\Exceptions\ModelNotFoundException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Auth\LoginRequest;
+use App\Http\Requests\API\Auth\RegisterRequest;
+use App\Http\Requests\API\Auth\ResetPasswordRequest;
+use App\Http\Requests\BaseRequest;
+use App\Http\Resources\API\Auth\LoginResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -24,112 +28,72 @@ class AuthController extends Controller
     {
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): LoginResource
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-        $credentials = $request->only('email', 'password');
-        $token = JWTAuth::attempt($credentials);
-        if (!$token) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
-        }
+        $token = $this->LoginByJwt($request);
 
-        return response()->json([
-            'message' => 'Login successful',
+        return LoginResource::make([
+            'message' => trans('message.login-success'),
             'user' => JWTAuth::user(),
-            'authorization' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ],
+            'token' => $token,
         ]);
     }
 
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): LoginResource
     {
-        $request->validate([
-            FieldEnum::name->name => 'required|string|max:255',
-            FieldEnum::email->name => 'required|string|email|max:255|exists:users,email',
-            FieldEnum::password->name => 'required|string|min:3',
-            FieldEnum::code->name => 'required|string|min:6',
-        ]);
-
-        $name = $request->input(FieldEnum::name->name);
-        $email = $request->input(FieldEnum::email->name);
-        $code = $request->input(FieldEnum::code->name);
-        $password = $request->input(FieldEnum::password->name);
-
         $userDto = $this->dtoMediator->convertDataToUserDto(
-            email: $email
+            email: $request->getInputEmail()
         );
 
         $user = $this->userService->findOrCreateByEmail($userDto);
-        if(empty($user)){
-            return response()->json([
-                'message' => 'User Not Found',
-            ]);
-          //  throw_if(empty($user), ModelNotFoundException::class);
-        }
 
-        if(!empty(data_get($user,FieldEnum::name->value)) && !empty(data_get($user,FieldEnum::password->value))){
-            return response()->json([
-                'message' => 'User is Registered Before Please Login',
-            ]);
-        }
+        throw_if(empty($user),ModelNotFoundException::class); //User Not Found
 
-        if ($this->otpService->check($email, $code)) {
-            $userDto->setName($name);
-            $userDto->setPassword($password);
+        $isRegisteredBefore = !empty(data_get($user, FieldEnum::name->value)) &&
+                              !empty(data_get($user, FieldEnum::password->value));
+
+        throw_if($isRegisteredBefore,ModelNotFoundException::class); //User is Registered Before Please Login
+
+        if ($this->otpService->check($request->getInputEmail(), $request->getInputCode())) {
+
+            $userDto->setName($request->getInputName())
+                    ->setPassword($request->getInputPassword());
+
+
             $this->userService->updateByEmail($userDto);
 
-            //Auth::login($user);
-            RateLimiter::clear($email);
+            RateLimiter::clear($request->getInputEmail());
 
-            return response()->json([
-                'user' => $user,
-                'authorization' => [
-                    'token' => JWTAuth::fromUser($user),
-                    'type' => 'bearer',
-                ],
+            $token = $this->LoginByJwt($request);
+
+            return LoginResource::make([
+                'message' => trans('message.register-success'),
+                'user' => JWTAuth::user(),
+                'token' => $token,
             ]);
+
         }
-        return response()->json([
-            'message' => 'Otp is Not Correct',
-        ]);
+
+        return throw new ModelNotFoundException(); //Otp is Not Correct
     }
 
-    public function logout(): JsonResponse
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        JWTAuth::invalidate(JWTAuth::getToken());
-
-        return response()->json([
-            'message' => 'Successfully logged out',
-        ]);
-    }
-
-    public function resetPassword(Request $request): JsonResponse
-    {
-        $request->validate([
-            FieldEnum::email->name => 'required|string|email|max:255|unique:users',
-            FieldEnum::password->name => 'required|string|min:3',
-            FieldEnum::code->name => 'required|string|min:6',
-        ]);
 
         $email = $request->input(FieldEnum::email->name);
         $code = $request->input(FieldEnum::code->name);
         $password = $request->input(FieldEnum::password->name);
 
         $userDto = $this->dtoMediator->convertDataToUserDto(
-            email: $email
+            email: $request->getInputEmail()
         );
 
-        if ($this->otpService->check($email, $code)) {
+        if ($this->otpService->check($request->getInputEmail(), $code)) {
             $user = $this->userService->findOrCreateByEmail($userDto);
             $userDto->setPassword($password);
             $this->userService->updateByEmail($userDto);
 
-            RateLimiter::clear($email);
+            RateLimiter::clear($request->getInputEmail());
 
             return response()->json([
                 'message' => 'Successfully Reset Password',
@@ -137,6 +101,25 @@ class AuthController extends Controller
         }
         return response()->json([
             'message' => 'Not Found Valid OTP',
+        ]);
+    }
+
+    private function LoginByJwt(BaseRequest $request){
+        $token = JWTAuth::attempt($request->only(
+            FieldEnum::email->value,
+            FieldEnum::password->value)
+        );
+        throw_if(!$token,ModelNotFoundException::class); //Invalid credentials
+        return $token;
+    }
+
+
+    public function logout(): JsonResponse
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+
+        return response()->json([
+            'message' => trans('message.logout-success'),
         ]);
     }
 }

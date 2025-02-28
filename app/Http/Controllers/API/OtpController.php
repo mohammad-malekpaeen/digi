@@ -7,8 +7,8 @@ use App\Contracts\Services\OtpServiceContract;
 use App\Contracts\Services\UserServiceContract;
 use App\Enum\FieldEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\OtpStoreRequest;
-use App\Http\Resources\API\OtpResource;
+use App\Http\Requests\API\Auth\OtpRequest;
+use App\Http\Resources\API\Auth\OtpResource;
 use App\Notifications\SendOtpNotification;
 use Illuminate\Support\Facades\Log;
 
@@ -23,7 +23,7 @@ class OtpController extends Controller
     {
     }
 
-    public function create(OtpStoreRequest $request)
+    public function create(OtpRequest $request)
     {
         $userDto = $this->dtoMediator->convertDataToUserDto(
             email: $request->input(FieldEnum::email->name)

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Resources\API;
+namespace App\Http\Resources\API\Auth;
 
 use App\Enum\FieldEnum;
 use App\Http\Resources\BaseResource;
 use Illuminate\Http\Request;
+use function data_get;
 
 class OtpResource extends BaseResource {
 

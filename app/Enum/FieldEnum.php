@@ -39,4 +39,8 @@ enum FieldEnum: string {
 	case startedAt                       = 'started_at';
 	case cancelAt                        = 'cancel_at';
     case message                         = 'message';
+    case user                            = 'user';
+    case authorization                   = 'authorization';
+    case token                           = 'token';
+    case bearer                          = 'bearer';
 }
