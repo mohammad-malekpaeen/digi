@@ -1,5 +1,7 @@
 <?php
 
+use App\Enum\FieldEnum;
+
 return [
 
     /*
@@ -137,12 +139,20 @@ return [
     */
 
     'meilisearch' => [
-        'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
-        'key' => env('MEILISEARCH_KEY'),
+        'host' => env('MEILISEARCH_HOST', 'http://172.22.0.2:7700'),
+        'key' => env('MEILISEARCH_KEY','Vhzsu6OUynCI46JbUuonhUdQbbJSxkBfYkicwHAW-gE'),
         'index-settings' => [
              'posts' => [
-            'filterableAttributes'=> ['id', 'title', 'slug', 'categoryId'],
-            'sortableAttributes' => ['created_at'],
+            'filterableAttributes'=> [
+                FieldEnum::title->value,
+                FieldEnum::slug->value,
+                FieldEnum::body->value,
+                FieldEnum::categoryId->value,
+                FieldEnum::userId->value
+                ],
+            'sortableAttributes' => [
+                FieldEnum::createdAt->value
+            ],
              ],
         ],
     ],

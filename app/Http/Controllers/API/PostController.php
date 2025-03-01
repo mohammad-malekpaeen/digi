@@ -3,33 +3,26 @@
 namespace App\Http\Controllers\API;
 
 use App\Contracts\Mediator\DtoMediatorContract;
+use App\Contracts\Services\PostSearchServiceContract;
 use App\Contracts\Services\PostServiceContract;
 use App\Dto\PostDto;
 use App\Enum\FieldEnum;
 use App\Facades\StringFacade;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PostRequest;
+use App\Http\Resources\API\PostResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class PostController extends Controller
 {
 
     public function __construct(
         protected DtoMediatorContract $dtoMediator,
-        protected PostServiceContract $postService
+        protected PostServiceContract $postService,
+        protected PostSearchServiceContract $searchService,
     )
     {
-    }
-
-    public function search(Request $request): JsonResponse
-    {
-        $posts = $this->postService->search($request->input(FieldEnum::keyword->value));
-
-        return response()->json([
-            FieldEnum::response->value => $posts,
-        ]);
     }
 
     /**
@@ -39,24 +32,26 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         $dto = $this->getDtoFromRequest($request);
-        $this->postService->create($dto);
+        $post = $this->postService->create($dto);
 
-        return response(null, Response::HTTP_CREATED);
+        return PostResource::make([
+            'message' => trans('message.post-store-success'),
+            'posts' => $post,
+        ]);
     }
 
     /**
-     * @param Request $request
+     * @param PostRequest $request
      * @return PostDto
      */
-    public function getDtoFromRequest(Request $request): PostDto
+    public function getDtoFromRequest(PostRequest $request): PostDto
     {
         return $this->dtoMediator->convertDataToPostDto(
-            title: $request->input(FieldEnum::title->name),
-            slug: StringFacade::slug($request->input(FieldEnum::slug->name)),
-            body: $request->input(FieldEnum::body->name),
-            excerpt: $request->input(FieldEnum::excerpt->name),
-            publishedAt: $request->input(FieldEnum::publishedAt->name),
-            categoryId: $request->input(FieldEnum::categoryId->name),
+            category_id: $request->getInputCategoryId(),
+            user_id: $request->getInputUserId(),
+            title: $request->getInputTitle(),
+            slug: StringFacade::slug($request->getInputSlug()),
+            body: $request->getInputBody(),
         );
     }
 
@@ -69,8 +64,33 @@ class PostController extends Controller
         $dto = $this->getDtoFromRequest($request)->setId($id);
         $this->postService->update($dto);
 
-        return response(null, Response::HTTP_OK);
+        return response()->json([
+            'message' => trans('message.post-update-success'),
+        ]);
     }
 
+
+    public function search(Request $request): JsonResponse
+    {
+        $query = $request->input(FieldEnum::query->value);
+        $categoryId = $request->input(FieldEnum::categoryId->value);
+        $userId = $request->input(FieldEnum::userId->value);
+
+        $results = $this->searchService
+                        ->search()
+                        ->filterByCategory($categoryId)
+                        ->filterByAuthor($userId)
+                        ->paginate($request->input('per_page', 15))
+                        ->execute();
+
+        return response()->json([
+            'data' => $results->items(),
+            'meta' => [
+                'current_page' => $results->currentPage(),
+                'total_pages' => $results->lastPage(),
+                'total_items' => $results->total(),
+            ]
+        ]);
+    }
 
 }

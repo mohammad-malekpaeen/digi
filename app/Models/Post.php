@@ -14,10 +14,11 @@ class Post extends Model
     use FilterScope, Searchable,SoftDeletes;
 
     protected $fillable = [
+        FieldEnum::categoryId->value,
+        FieldEnum::userId->value,
         FieldEnum::title->value,
         FieldEnum::slug->value,
         FieldEnum::body->value,
-        FieldEnum::categoryId->value,
     ];
 
     protected $casts = [
@@ -30,7 +31,13 @@ class Post extends Model
 
     public function toSearchableArray()
     {
-        return $this->toArray();
+        return [
+            FieldEnum::title->value => $this->{FieldEnum::title->value},
+            FieldEnum::slug->value => $this->{FieldEnum::slug->value},
+            FieldEnum::body->value => $this->{FieldEnum::body->value},
+            FieldEnum::categoryId->value => $this->{FieldEnum::categoryId->value},
+            FieldEnum::userId->value => $this->{FieldEnum::userId->value},
+        ];
     }
 
     /**

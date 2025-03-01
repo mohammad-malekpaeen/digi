@@ -43,4 +43,6 @@ enum FieldEnum: string {
     case authorization                   = 'authorization';
     case token                           = 'token';
     case bearer                          = 'bearer';
+    case posts                           = 'posts';
+    case query                           = 'query';
 }

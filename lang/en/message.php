@@ -8,6 +8,8 @@ return [
 	'logout-success' => 'Successfully logged out',
 	'category-update-success' => 'Successfully Update Category',
 	'category-store-success' => 'Successfully Store Category',
+	'post-store-success' => 'Successfully Store Post',
+	'post-update-success' => 'Successfully Update Post',
 	//</editor-fold>
 ];
 

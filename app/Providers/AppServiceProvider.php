@@ -9,6 +9,7 @@ use App\Contracts\Repositories\PostRepositoryContract;
 use App\Contracts\Repositories\UserRepositoryContract;
 use App\Contracts\Services\CategoryServiceContract;
 use App\Contracts\Services\OtpServiceContract;
+use App\Contracts\Services\PostSearchServiceContract;
 use App\Contracts\Services\PostServiceContract;
 use App\Contracts\Services\UserServiceContract;
 use App\Mediator\DtoMediator;
@@ -18,6 +19,7 @@ use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
 use App\Services\CategoryService;
 use App\Services\OtpService;
+use App\Services\PostSearchService;
 use App\Services\PostService;
 use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         PostServiceContract::class => PostService::class,
         UserServiceContract::class => UserService::class,
         OtpServiceContract::class => OtpService::class,
+        PostSearchServiceContract::class => PostSearchService::class,
 
         //Others
         DtoMediatorContract::class => DtoMediator::class,

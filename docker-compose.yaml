@@ -1,8 +1,15 @@
 services:
   php:
-    image: "php-digi"
+    image: "php-digi-v3"
     container_name: php-digi
     restart: unless-stopped
+    environment:
+      - http_proxy=
+      - https_proxy=
+      - no_proxy=localhost,127.0.0.1
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - NO_PROXY=localhost,127.0.0.1
     ports:
       - "8000:8000"
     build:
@@ -69,12 +76,10 @@ services:
     container_name: meilisearch
     restart: unless-stopped
     environment:
-      MEILI_MASTER_KEY=: 'MohammadMalek'
+      MEILI_MASTER_KEY : 'Vhzsu6OUynCI46JbUuonhUdQbbJSxkBfYkicwHAW-gE'
+      MEILI_ENV : 'development'
     ports:
       - "7700:7700"
-    volumes:
-     - db_meili:/meili_data
-
 
 volumes:
   db_data:
@@ -88,10 +93,4 @@ volumes:
     driver_opts:
       type: 'none'
       device: '${VOLUME_PATH}/redis_data'
-      o: 'bind'
-  db_meili:
-    driver: local
-    driver_opts:
-      type: 'none'
-      device: '${VOLUME_PATH}/db_meili'
       o: 'bind'
