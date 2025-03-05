@@ -48,7 +48,7 @@ services:
     restart: unless-stopped
     build: ./docker/redis
     volumes:
-      - redis_data:/data
+      - ./volumes/digi_redis_data:/data
     command: --requirepass ${REDIS_PASSWORD}
     environment:
       - REDIS_REPLICATION_MODE=master
@@ -69,7 +69,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - ./volumes/digi_db_data:/var/lib/postgresql/data
 
   meilisearch:
     image: getmeili/meilisearch:v1.13.0
@@ -80,17 +80,3 @@ services:
       MEILI_ENV : 'development'
     ports:
       - "7700:7700"
-
-volumes:
-  db_data:
-    driver: local
-    driver_opts:
-      type: 'none'
-      device: '${VOLUME_PATH}/db_data'
-      o: 'bind'
-  redis_data:
-    driver: local
-    driver_opts:
-      type: 'none'
-      device: '${VOLUME_PATH}/redis_data'
-      o: 'bind'

@@ -4,8 +4,8 @@
 /public/hot
 /public/storage
 /storage/*.key
-/volumes/redis_data/*
-/volumes/db_data/*
+/volumes/digi_db_data/*
+/volumes/digi_redis_data/*
 /vendor
 .env
 .env.backup
