@@ -4,6 +4,7 @@ Features :
 - Laravel : 11v
 - ThirdParty : Laravel Scout
 - Driver : MeiliSearch
+- Services : Blog Post
 - Auth : JWT-AUTH ( Tymon )
 
 Up & Running : 
