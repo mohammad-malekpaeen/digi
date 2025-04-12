@@ -1,10 +1,10 @@
 # Task DIGILAND
 
 Features :
-Laravel : 11v
-ThirdParty : Laravel Scout
-Driver : MeiliSearch
-Auth : JWT-AUTH ( Tymon )
+- Laravel : 11v
+- ThirdParty : Laravel Scout
+- Driver : MeiliSearch
+- Auth : JWT-AUTH ( Tymon )
 
 Up & Running : 
 
