@@ -1,4 +1,10 @@
-# Task DIGILAND With JWT-AUTH TOKENS
+# Task DIGILAND
+
+Features :
+Laravel : 11v
+ThirdParty : Laravel Scout
+Driver : MeiliSearch
+Auth : JWT-AUTH ( Tymon )
 
 Up & Running : 
 
